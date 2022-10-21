@@ -1,0 +1,42 @@
+``` shell
+
+[root@T1 www]# cd /var/www/site2  ##设置三个站点，在这每个站点下面创建一个index.html文档方便测试
+[root@T1 www]# cd /var/www/site2
+[root@T1 www]# cd /var/www/site2
+[root@T1 conf.d]# cd /etc/httpd/conf.d/  ##修改WWW的配置文件，以下这些域名要在DNS服务器注册
+[root@T1 conf.d]# vi vhost.conf
+#### 配置如下操作
+NameVirtualHost *:80
+<VirtualHost *:80>
+        ServerName www.luoguojun.com
+        DocumentRoot /var/www/html
+</VirtualHost>
+
+<VirtualHost *:80>
+        ServerName www2.luoguojun.com
+        DocumentRoot /var/www/site2
+</VirtualHost>
+
+<VirtualHost *:8080>
+        ServerName study.luoguojun.com
+        DocumentRoot /var/www/site3
+</VirtualHost>
+
+<VirtualHost *:80>
+        ServerName yjkh.luoguojun.com
+        DocumentRoot /var/www/site4
+</VirtualHost>
+###eth0的配置子接口eth0：1
+[root@T1 ~]# cd /etc/sysconfig/network-scripts/
+[root@T1 ~]# cp ifcfg-eth0 ifcfg-eth0:1 ##进入接口修改子接口的Ip
+[root@T1 ~]# ifconfig eth0:1 up ##之后网络重启
+
+## 注意要是对httpd.conf文件修改最好备份一份
+[root@T1 ~]# vi /etc/httpd/conf/httpd.conf  ##进入总的配置文件，在找到136行找到Listen 添加你要的端口8080
+[root@T1 ~]# service httpd restart
+```
+
+``` powershell
+
+```
+

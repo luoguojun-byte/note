@@ -1,0 +1,13 @@
+```shell
+基本的ACL（2000-2999）
+（1）配置路由器接口地址
+（2）设置基本ACL（原地址source）rule deny source 192.168.2.1 0.0.0.0 (全部不匹配)
+（3）在目标网段的接口应用基本ACL规则 （traffic-filter）
+
+
+高级的ACL（3000-3999）
+（1）配置路由器接口地址
+（2）设置高级ACL（目标地址destination 原地址source）rule deny ip（协议） destination (目标) 192.168.2.0 0.0.0.255 （外来人员部） source （源）192.168.3.0 0.0.0.255（财务部）  (全部不匹配)
+（3）在源网段的接口应用高级ACL规则 （traffic-filter）
+```
+

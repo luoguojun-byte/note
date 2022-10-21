@@ -1,0 +1,64 @@
+# FRP内网穿透
+
+## 下载地址
+
+- https://github.com/fatedier/frp/releases
+
+- 如果服务器和客户端是两种系统下载对应的包
+
+![image-20210312110125547](E:%5C%E7%AC%94%E8%AE%B0%5CFRP%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%5C%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9%5Cimage-20210312110125547.png)
+
+## 准备
+
+- 一个公网IP（可以买一个学生服务器，腾讯或者阿里）
+
+## 安装
+
+- 在下载好软件包后，Linux服务器只需要设置已下配置：
+
+![image-20210312042416633](E:%5C%E7%AC%94%E8%AE%B0%5CFRP%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%5C%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9%5Cimage-20210312042416633.png)
+
+- 修改frps.ini配置文件，以下为服务器参数
+
+- [common]
+  bind_port = 7500  #服务器连接客户端对应的端口
+
+  dashboard_addr = 0.0.0.0  
+  dashboard_port = 8001 #控制台端口
+  dashboard_user = admin #控制台账号
+  dashboard_pwd = 123456 #控制台密码
+
+  vhost_http_port = 8000
+
+- 启动服务器服务：在对应的目录下——./frps
+
+- nohup ./frpc -c ./frpc.ini > /dev/null 2>&1 &(生产使用中可使用如下命令在后台运行)
+
+
+
+
+
+- 修改frpc.ini配置文件，以下为客户端参数(内网参数)
+
+- [common]
+
+  server_addr = X.X.X.X #服务器IP
+
+  server_port = 7500 #这里要和服务器的开发端口对上
+
+  [Luo]  #这只是一个名字，取什么都可以带上[ ]就行
+
+  type = tcp  #链接服务类型
+
+  local_ip = 127.0.0.1 #本机地址，默认就是127
+
+  local_port = 3389 #远程链接默认的端口
+  remote_port = 8888 #这里就是在其他机器连接这台机器输入的端口
+
+  比如在其他的人的电脑远程连接输入X.X.X.X:8888
+
+- ![image-20210312041935924](E:%5C%E7%AC%94%E8%AE%B0%5CFRP%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%5C%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9%5Cimage-20210312041935924.png)
+
+- 进入cmd输入 frpc.exe -c frpc.ini  开启客户端服务
+
+- 如果服务器开放的端口启动不起来就去看看服务器的安全组，将自己想要的端口放行

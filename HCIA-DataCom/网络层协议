@@ -1,0 +1,47 @@
+#                                                         网络层协议
+
+## IP协议
+
+ - 对于网络设备提供一个逻辑地址
+ - 负责数据包的寻址和转发
+
+## 数据封装
+
+- 应用层→数据（PDU）
+- 传输层→数据段（Segment） 
+- 网络层→数据包（Packet）从上层接收到的数据给它添加对应的网络层信息叫（IP头部）
+- 数据链路层→头部+数据+尾部（Frame）添加数据链路层的头部跟尾部，形成数据帧
+- 物理层→bit 比特流0101这种形式
+
+## IPV4报文格式
+
+- 以太网头部、IP头部、TCP头部、用户数据、以太网尾部
+
+  
+
+- Version    HeaderLengh    Type of Service   Total Lengh  （固定长度20byte）
+
+- ​         Identification          Flags           Fragment Offset      （固定长度20byte）
+
+- 
+
+- ​        TTL                Protocol             Header Checksum     （固定长度20byte）
+
+- ​                           Source IP Address                                   （固定长度20byte）
+
+- ​                           Destination IP Address                             （固定长度20byte）
+
+- ​                 Options                                         Padding           (可选长度0~40byte)
+
+- Header Lengh指的是IP头部的长度，Total Lengh指的是（IP头部、TCP头部、用户数据）的总长
+
+- 数据分片（ Identification、Flags、Fragment Offset ）
+
+- 生存时间（Time To Live）设置数据包可以经过的路由器数目,经过一台路由器TTl减1，0时数据包丢弃（防止环路） 
+
+- Protocol（TCP/UDP）TCP：安全可靠有效的连接。6/17→TCP/UDP、1→ICPM
+
+
+
+
+

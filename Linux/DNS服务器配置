@@ -1,0 +1,96 @@
+# DNS服务器配置
+
+``` powershell
+关闭防火墙和selinux
+[root@T1 ~]# service iptables  stop
+[root@T1 ~]# yum -y install bind 下载软件
+[root@T1 ~]# rpm -ql bind 确定是否正确安装
+/etc/logrotate.d/named       //日志轮转文件
+/etc/named             //配置文件的主目录
+/etc/named.conf     //主配置文件
+/etc/named.rfc1912.zones  //zone文件，定义域
+/etc/rc.d/init.d/named     //启动脚本
+
+/usr/sbin/named         //二进制命令
+/usr/sbin/named-checkconf     //检查配置文件的命令
+/usr/sbin/named-checkzone        //检查区域文件的命令
+
+/var/log/named.log        //日志文件
+/var/named               //数据文件的主目录
+/var/named/named.ca      //根域服务器
+/var/named/named.localhost      //正向解析区域文件的模板
+/var/named/named.loopback        //反向解析区域文件的模板
+/var/named/slaves    //从dns服务器下载的默认路径
+/var/run/named          //进程文件
+
+例子：[root@T1 ~]# dig +trace www.baidu.com 追踪DNS解析过程
+
+[root@T1 ~]# vim /etc/named.conf  //根据需求通过更改配置文件来完成服务的搭建
+options {
+        listen-on port 53 { 127.0.0.1;any;}; //定义监听方式，any代表全网监听
+        listen-on-v6 port 53 { ::1; };
+        directory       "/var/named";
+        dump-file       "/var/named/data/cache_dump.db";
+        statistics-file "/var/named/data/named_stats.txt";
+        memstatistics-file "/var/named/data/named_mem_stats.txt";
+        allow-query     { localhost; };      //允许任何人来查询
+        recursion yes;
+............
+};
+............
+
+)修改子配置文件（不要直接修改源文件！！！）用键盘复制 5yy跳到最后面p粘贴
+[root@T1 ~]# vim /etc/named.rfc1912.zones
+在该文件后面追加一下内容
+zone "localhost.localdomain" IN {  //哪个域   比如：web.cluster
+        type master;
+        file "named.localhost";     //和上面对应的域名
+        allow-update { none; };
+};
+zone "1.0.0.127.in-addr.arpa" IN {  //同理，正反向的file名字和下面的对应
+        type master;
+        file "named.loopback";
+        allow-update { none; };
+};
+
+）需要在指定的数据目录里创建相应的zone文件
+[root@T1 named]# cd /var/named/
+[root@T1 named]# cp -p named.localhost + 前面的文件名,正向解析 
+[root@T1 named]# cp -p named.loopback  + 前面的文件名,反向解析
+
+）修改相应的区域文件（正向和反向）
+[root@T1 named]# vim + 文件名
+注意：TTL是代表时间，IN是Internet，SOA是给谁授权，NS是nameserver，后面是名称最后面那个点必须带上，下面是你的电脑上服务器要管理的域名，域名前面的是abc那开头的就是abc，必须保持一致，修改时同时修改
+```
+
+![image-20200913102632103](E:%5C%E7%AC%94%E8%AE%B0%5CLinux%5C%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9%5Cimage-20200913102632103.png)
+
+![image-20200913103830805](E:%5C%E7%AC%94%E8%AE%B0%5CLinux%5C%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9%5Cimage-20200913103830805.png)
+
+
+
+```powershell
+) 语法检测
+[root@T1 named]# named-checkconf /etc/named.conf  //没有出现提示代表好了
+[root@T1 named]# named-checkconf /etc/named.rfc1912.zones
+后面检测域名写两遍出现OK代表语法正确的
+```
+
+![image-20200913104244503](E:%5C%E7%AC%94%E8%AE%B0%5CLinux%5C%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9%5Cimage-20200913104244503.png)
+
+```powershell
+)启动服务，验证
+[root@T1 ~]# service named start
+[root@T1 ~]# netstat -nulp |grep named   ///！！！！！注意这里要和你的dns服务器其中之一对上，否则后面解析不了
+)用 dig解析
+[root@T1 ~]# dig @域名 例如：@10.1.1.250 web1.web.cluster //正向解析
+[root@T1 ~]# dig -x 例如 10.1.1.20 @10.1.1.250   //反向解析
+
+还有两个可以用于解析的软件 nslookup，host
+```
+
+![image-20200929091045648](E:%5C%E7%AC%94%E8%AE%B0%5CLinux%5C%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9%5Cimage-20200929091045648.png)
+
+如果不行的话去看看iptables防火墙 或者端口
+
+![image-20200917201156953](E:%5C%E7%AC%94%E8%AE%B0%5CLinux%5C%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9%5Cimage-20200917201156953.png)

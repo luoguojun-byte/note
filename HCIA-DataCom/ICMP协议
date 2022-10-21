@@ -1,0 +1,13 @@
+#                                                          ICMP协议
+
+
+
+## ICMP（Internet Control Message Protocol）
+
+- 用来在网络设备间传送各种差错和控制信息，用来检测网络的连通性
+
+- ICMP重定向报文是ICMP控制报文的一种
+
+  ![image-20210308174712557](E:%5C%E7%AC%94%E8%AE%B0%5CHCIA-DataCom%5C%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9%5Cimage-20210308174712557.png)
+
+-  ICMP错误报告——Tracert（基于报文中的TTL值来逐跳追踪报文的转发路径）

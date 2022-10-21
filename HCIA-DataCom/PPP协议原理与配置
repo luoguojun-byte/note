@@ -1,0 +1,30 @@
+# PPP协议原理与配置
+
+### PPP协议概述
+
+- PPP（Point-to-Point Protocol，点到点协议，属于数据链路层），用于全双工的链路上进行点到点的数据传输封装
+- PPP协议支持PAP（密码验真协议）和CHAP（挑战握手协议） 
+- 在以太网承载PPP协议时，可扩展PPPoE协议
+- PPP提供LCP（链路控制协议，对上的）
+- PPP提供NCP（网络控制协议，对下的）
+
+### PPP链路接口状态机
+
+![image-20210308192443248](E:%5C%E7%AC%94%E8%AE%B0%5CHCIA-DataCom%5C%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9%5Cimage-20210308192443248.png)
+
+### LCP报文格式
+
+- 0x0021：IP报文
+- 0x8021：PCP报文
+- 0xC021：LCP报文
+- 0xC023：PAP报文
+- 0xC223：CHAP报文
+- Code                         名称                         内容
+- 0x01                 Configure-Request     配置请求报文
+- 0x02                 Configure-ACK           配置成功报文
+- 0x03                 Configure-NAK           配置参数需协商
+- 0x04                 Configure-Reject        配置参数不识别    
+
+### PPPoE
+
+![image-20210308193741076](E:%5C%E7%AC%94%E8%AE%B0%5CHCIA-DataCom%5C%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9%5Cimage-20210308193741076.png)

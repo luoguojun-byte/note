@@ -1,0 +1,230 @@
+# 日常命令
+
+system-view 进入系统模式
+
+sysname +名称 修改名称
+
+clock timezone 修改时区
+
+clock datetime 修改时间 HH:MM:mm XXXX-XX-XX
+
+display clock 查看时间
+
+header login ””配置用户登录前的标题消息header shell “ ”配置用户登录后的标题消息
+用户等级      命令等级       名称  	
+
+ 0                      0                访问级  
+
+ 1                   0 and 1         监控级   
+
+  2                0,1 and 2        配置级  
+
+3-15        0,1,2 and 3         管理级
+
+idle-timeout 设置超时时间s
+
+creen-length 设置屏幕的临时显示行数
+
+history-command max-size 设置历史缓冲区的大小
+
+shut down 关闭
+
+unbo shout down 非关闭
+
+interface G.... 接口
+
+negotiation自动协商
+
+undo negotiation 关闭自动协商
+
+speed 速率
+
+duplex full 双工
+
+display 查看某个东西修改
+
+# SSH配置
+
+[AR1]interface GigabitEthernet 0/0/0
+
+[AR1-GigabitEthernet0/0/0]ip address 100.1.1.1 30
+
+在AR2做同样的配置
+
+[AR1]rsa local-key-pair ？ 创建本地密钥
+
+[AR1]stelnet server enable 启动服务器
+
+AR1]user-interface vty 0 4 进入虚拟用户接口
+
+[AR1-ui-vty0-4]protocol inbound ? 设置ssh协议
+
+[AR1-ui-vty0-4]authentication-mode aaa 认证
+
+[AR1]aaa 进入aaa的配置模式
+
+[AR1-aaa]local-user ? 设置用户名
+
+[AR1-aaa]local-user user1 password cipher admin@huawei 设置用户和密码
+
+[AR1-aaa]local-user user1 service-type ? 设置服务类型
+
+[AR1-aaa]local-user user1 privilege level ? 设置用户等级
+
+[AR1]ssh user user1 authentication-type password 设置用户认证类型
+
+[AR2]ssh client first-time enable 将首次访问启动起来
+
+[AR1]stelnet server enable 开启AR1服务器
+
+[AR1]display ssh server status 查看AR1的状态
+
+
+
+# Telnet配置
+
+[AR1]interface GigabitEthernet 0/0/0
+
+[AR1-GigabitEthernet0/0/0]ip address 100.1.1.1 30 
+
+在AR2做同样的配置
+
+[AR1]user-interface vty 0 4 进入虚拟用户接口
+
+[AR1-ui-vty0-4]authentication-mode ? 进入认证模式
+
+[AR2]ping 100.1.1.1 认证成功出现 <AR1><AR1>
+
+display users 查看访问的用户
+
+[AR1-ui-vty0-4]user privilege 设置用户终端的优先级
+
+AR1-ui-vty0-4]user privilege level 15
+
+<AR1>free user-interface vty ? 连接完毕释放接口
+
+save 保存配置，然后通过 dir查看配置
+
+
+
+# 配置Access模式
+
+## 创建vlan
+
+vlan id  创建一个
+
+vlan batch id  创建多个
+
+vlan batch id to id 创建连续的
+
+## VLAN Access配置
+
+![image-20200517091515658](E:%5C%E7%AC%94%E8%AE%B0%5CENSP%5C%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9%5Cimage-20200517091515658.png)
+
+## 连续配置 Access接口
+
+interface E......+接口  
+
+prot group 1  
+
+group-menber E..... 起始接口 to E.... 目标接口  
+
+ prot link-type access 
+
+ port default vlan id  
+
+display vlan 查看vlan
+
+## VLAN Trunk 配置
+
+interface G.....+接口  
+
+ prot link-type drunk  
+
+ prot drunk allow-pass ？
+
+## Trunk转Access或Access转Trunk
+
+### Trunk 转 Access
+
+display current-configuration 查看当前配置  
+
+interface G....接口  
+
+undo trunk allow-pass vlan id 这里all指包含vlan1，不能undo all 
+
+ interface G.....+接口   
+
+prot link-type access   
+
+prot default vlan +id
+
+### Access 转 Trunk
+
+undo prot default vlan +id 
+
+ interface G....+接口
+
+  prot link-type trunk  
+
+ prot drunk allow-pass ？
+
+
+
+
+
+## 综合Telnet实验
+
+![image-20200528100852264](E:%5C%E7%AC%94%E8%AE%B0%5CENSP%5C%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9%5Cimage-20200528100852264.png)
+
+所运用到的知识
+
+ aaa配置
+
+port lint-type access
+
+管理Vlan 
+
+port link-type trunk
+
+
+
+## 链路聚合
+
+[S2]interface Eth-Trunk 1 创建链路
+
+[S2-Eth-Trunk1]quit
+
+[S2]interface GigabitEthernet 0/0/1 
+
+[S2-GigabitEthernet0/0/1]eth-trunk 1 为接口配置e-Trunk 1
+
+[S2]interface GigabitEthernet 0/0/2 
+
+[S2-GigabitEthernet0/0/2]eth-trunk 1 同理
+
+[S2]display eth-trunk 1 查看创建的链路
+
+![image-20200808150947194](E:%5C%E7%AC%94%E8%AE%B0%5CENSP%5C%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9%5Cimage-20200808150947194.png)
+
+## 配置静态LACP模式的链路聚合
+
+创建 Eth-Trunk 1 并且配置 Eth-Trunk为静态LACP模式。然后将接口加入到Eth-Trunk 1.
+
+[S1]interface Eth-Trunk 1 创建链路
+
+[S1-Eth-Trunk1]mode lacp
+
+[S1-Eth-Trunk1]quit
+
+[S1]interface GigabitEthernet 0/0/1 
+
+[S1-GigabitEthernet0/0/1]eth-trunk 1 为接口配置e-Trunk 1
+
+[S1]interface GigabitEthernet 0/0/2 
+
+[S1-GigabitEthernet0/0/2]eth-trunk 1 同理
+
+[S1]display eth-trunk 1 查看创建的链路
+
+![image-20200808151829748](E:%5C%E7%AC%94%E8%AE%B0%5CENSP%5C%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9%5Cimage-20200808151829748.png)
